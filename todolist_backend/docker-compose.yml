@@ -7,16 +7,18 @@ services:
     depends_on:
       - db
       - redis
+    env_file:
+      - .env  
 
   db:
     image: mysql:8.0
-    container_name: todolist_container
+    container_name: ${CONTAINER_NAME}
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: todolist_db
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
