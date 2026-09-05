@@ -14,7 +14,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "oxlint src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
@@ -22,15 +21,17 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
     "typeorm": "typeorm-ts-node-esm -d ./src/db-source.ts",
     "migration:generate": "npm run typeorm migration:generate ./migrations/InitSchema",
-    "migration:create":"typeorm-ts-node-esm migration:create",
+    "migration:create": "typeorm-ts-node-esm migration:create",
     "migration:run": "npm run typeorm migration:run",
-    "migration:revert": "npm run typeorm migration:revert"
+    "migration:revert": "npm run typeorm migration:revert",
+    "lint": "oxlint ."
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^12.0.1",
     "@nestjs/platform-express": "^12.0.1",
+    "@nestjs/swagger": "^12.0.1",
     "@nestjs/typeorm": "^12.0.1",
     "mysql2": "^3.24.3",
     "reflect-metadata": "^0.2.2",
