@@ -7,6 +7,7 @@ import INote from '../Notes/note.interface.js';
   email: string;
   password: string;
   notes: INote[];
+  isVerified: boolean;
   created_at: Date;
   updated_at: Date;
 }

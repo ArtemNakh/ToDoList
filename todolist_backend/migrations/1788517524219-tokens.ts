@@ -5,7 +5,7 @@ export class Tokens1788517524219 implements MigrationInterface {
     await queryRunner.query(`CREATE TABLE IF NOT EXISTS tokens(
         id INT PRIMARY KEY AUTO_INCREMENT,
         email VARCHAR(100) NOT NULL,
-        token VARCHAR(100) NOT NULL,
+        token VARCHAR(100) NOT NULL UNIQUE,
         type ENUM('VERIFICATION', 'TWO_FACTOR', 'PASSWORD_RESET') NOT NULL,
         expires_in TIMESTAMP NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -15,10 +15,10 @@ class Note implements INote {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100, nullable: false })
   title: string;
 
-  @Column({ name: 'content_json', nullable: true })
+  @Column({ name: 'content_json',type:"mediumtext", nullable: true })
   content: string;
 
   @ManyToOne(() => User, (user: IUser) => user.notes)
