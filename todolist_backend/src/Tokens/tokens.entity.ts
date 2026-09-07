@@ -33,6 +33,6 @@ export class Token implements IToken {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
-  @UpdateDateColumn({ name: 'created_at' })
+  @UpdateDateColumn({ name: 'updated_at' })
   updated_at: Date;
 }

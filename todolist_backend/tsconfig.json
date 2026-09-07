@@ -16,7 +16,9 @@
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictPropertyInitialization": false,
+    "strictPropertyInitialization": false, 
+    "jsx": "react-jsx",        
+    "jsxImportSource": "react",
     "types": ["vitest/globals", "node"]
   }
 }

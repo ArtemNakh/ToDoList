@@ -10,7 +10,7 @@ import INote from '../Notes/note.interface.js';
 import Note from '../Notes/note.entity.js';
 import IUser from './user.interface.js';
 
-@Entity()
+@Entity('users')
 export class User implements IUser {
   @PrimaryGeneratedColumn()
   id: number;
