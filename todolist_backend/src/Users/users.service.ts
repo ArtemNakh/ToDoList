@@ -41,7 +41,7 @@ export class UsersService {
       name: data.name,
       surname: data.surname,
       email: data.email,
-      password: data.password, //await argon2.hash(data.password),
+      password: await argon2.hash(data.password),
     });
     await this.usersRepository.save(user);
     return user;
@@ -62,6 +62,11 @@ export class UsersService {
       throw new NotFoundException(`User with id ${userId} not found`);
     }
 
+    // Якщо передано новий пароль — хешуємо його
+    if (dto.password) {
+      user.password = await argon2.hash(dto.password);
+      delete dto.password;
+    }
     Object.assign(user, dto);
     return await this.usersRepository.save(user);
   }

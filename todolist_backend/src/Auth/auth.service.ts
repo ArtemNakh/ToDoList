@@ -30,7 +30,7 @@ export class AuthService {
    * @throws ConflictException якщо користувач з таким email вже існує
    * @returns Повідомлення про успішну реєстрацію
    */
-  public async registrationUser(req: Request, dto: RegistrationUserDto) {
+  public async registrationUser(dto: RegistrationUserDto) {
     const isExists = await this.userService.findByEmail(dto.email);
     if (isExists) {
       throw new ConflictException(
@@ -38,7 +38,6 @@ export class AuthService {
       );
     }
     const newUser = await this.userService.createUser(dto);
-    console.log("register user",newUser)
     this.emailConfirmationService
       .sendVerificationToken(newUser.email)
       .catch((err:any) => console.error('Email error:', err));
@@ -62,12 +61,11 @@ export class AuthService {
     if (!user || !user.password) {
       throw new NotFoundException('Client not found. Please check your input.');
     }
-    const isValidPassword = dto.password; //await verify(user.password, dto.password);
+    const isValidPassword = await verify(user.password, dto.password);
     if (!isValidPassword) {
       throw new UnauthorizedException('Incorrect password.');
     }
     if (!user.isVerified) {
-      // await this.emailConfirmationService.sendVerificationToken(client.email);
       throw new UnauthorizedException(
         'Your email is not confirmed. Please, check your email and confirm it',
       );

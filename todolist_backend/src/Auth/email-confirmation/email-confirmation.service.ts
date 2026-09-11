@@ -50,7 +50,7 @@ export class EmailConfirmationService {
     }
 
     await this.usersService.updateUser(existingUser.id, { isVerified: true });
-    await this.tokensService.deletedToken(
+    await this.tokensService.deleteToken(
       existingToken.id,
       TokenType.VERIFICATION,
     );
@@ -82,7 +82,7 @@ export class EmailConfirmationService {
     }
 
     if (existingToken) {
-      await this.tokensService.deletedToken(
+      await this.tokensService.deleteToken(
         existingToken.id,
         TokenType.VERIFICATION,
       );

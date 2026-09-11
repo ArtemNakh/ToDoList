@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -22,6 +23,7 @@ class Note implements INote {
   content: string;
 
   @ManyToOne(() => User, (user: IUser) => user.notes)
+  @JoinColumn({ name: 'user_id' }) 
   user: IUser;
 
   @CreateDateColumn({ name: 'created_at' })

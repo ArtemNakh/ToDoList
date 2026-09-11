@@ -17,7 +17,7 @@ export class TokensService {
    * @param type - тип токена (наприклад, VERIFICATION)
    * @throws InternalServerErrorException якщо видалення не вдалося
    */
-  public async deletedToken(
+  public async deleteToken(
     tokenId: number,
     typeToken: TokenType,
   ): Promise<void> {

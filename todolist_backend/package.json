@@ -19,14 +19,16 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts",
-    "typeorm": "typeorm-ts-node-esm -d ./src/db-source.ts",
+    "typeorm": "typeorm-ts-node-esm -d ./config/dataSource.config.ts",
     "migration:generate": "npm run typeorm migration:generate ./migrations/InitSchema",
     "migration:create": "typeorm-ts-node-esm migration:create",
     "migration:run": "npm run typeorm migration:run",
     "migration:revert": "npm run typeorm migration:revert",
+    "seed": "node --loader ts-node/esm ./seeds/runAllSeeds.ts",
     "lint": "oxlint ."
   },
   "dependencies": {
+    "@faker-js/faker": "^10.6.0",
     "@nestjs-modules/mailer": "^2.3.7",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
