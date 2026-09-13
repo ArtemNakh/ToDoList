@@ -16,7 +16,7 @@ class PasswordMatchConstraint implements ValidatorConstraintInterface {
     const object = args.object as RegistrationUserDto;
     return value === object.password;
   }
-  defaultMessage(args: ValidationArguments) {
+  defaultMessage() {
     return 'Passwords do not match';
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EmailConfirmationService } from './email-confirmation.service.js';
 import { TokenVerificationDto } from './dto/TokenVerification.dto.js';

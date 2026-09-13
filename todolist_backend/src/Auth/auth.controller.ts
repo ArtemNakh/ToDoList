@@ -15,10 +15,9 @@ export class AuthController {
 
   @Post('v1/registration')
   public async registerClient(
-    @Req() req: Request,
     @Body() dto: RegistrationUserDto,
   ): Promise<RegistrationUserResponseDto> {
-    return this.authService.registrationUser(req, dto);
+    return this.authService.registrationUser(dto);
   }
 
   @Post('v1/login')

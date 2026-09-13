@@ -77,7 +77,7 @@ export class EmailConfirmationService {
         email,
         TokenType.VERIFICATION,
       );
-    } catch (error) {
+    } catch {
       existingToken = null;
     }
 

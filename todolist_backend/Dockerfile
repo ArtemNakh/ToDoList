@@ -1,5 +1,5 @@
 # Використовуємо офіційний образ Node.js
-FROM node:18
+FROM node:22
 
 # Встановлюємо робочу директорію
 WORKDIR /app
@@ -22,7 +22,7 @@ CMD ["npm", "start"]
 #Збір образа
 #docker build -t my-backend ./todolist_backend
 
-#Запуск контейнера
+#Запуск контейнера---
 #docker run -p 3000:3000 my-backend
 
 #запуск докера
