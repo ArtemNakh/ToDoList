@@ -16,6 +16,6 @@ export const getMailerConfig = async (
 		}
 	},
 	defaults: {
-		from: `Dentists system ${configService.getOrThrow<string>('MAIL_LOGIN')}`
+		from: `ToDo list ${configService.getOrThrow<string>('MAIL_LOGIN')}`
 	}
 })

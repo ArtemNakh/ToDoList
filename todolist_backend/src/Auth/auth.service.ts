@@ -13,6 +13,7 @@ import { LoginUserDto } from './dto/loginUser.dto.js';
 import IUser from '../Users/user.interface.js';
 import { ConfigService } from '@nestjs/config';
 import { EmailConfirmationService } from './email-confirmation/email-confirmation.service.js';
+import { HashService } from '../libs/common/comparePassword.js';
 
 @Injectable()
 export class AuthService {
@@ -40,7 +41,7 @@ export class AuthService {
     const newUser = await this.userService.createUser(dto);
     this.emailConfirmationService
       .sendVerificationToken(newUser.email)
-      .catch((err:any) => console.error('Email error:', err));
+      .catch((err: any) => console.error('Email error:', err));
     return {
       message:
         'You are successfully registered. Please confirm your email. A mail was sent to your email.',
@@ -61,7 +62,7 @@ export class AuthService {
     if (!user || !user.password) {
       throw new NotFoundException('Client not found. Please check your input.');
     }
-    const isValidPassword = await verify(user.password, dto.password);
+    const isValidPassword = await HashService.comparePassword(user.password, dto.password);
     if (!isValidPassword) {
       throw new UnauthorizedException('Incorrect password.');
     }

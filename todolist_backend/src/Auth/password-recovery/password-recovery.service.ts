@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { hash } from 'argon2';
 import { EmailService } from '../../libs/email/email.service.js';
 import { UsersService } from '../../Users/users.service.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
@@ -12,6 +11,7 @@ import { NewPasswordDto } from './dto/new-password.dto.js';
 import { TokensService } from '../../Tokens/tokens.service.js';
 import { TokenType } from '../../Tokens/tokens.entity.js';
 import { IToken } from '../../Tokens/token.interface.js';
+import { HashService } from '../../libs/common/comparePassword.js';
 
 @Injectable()
 export class PasswordRecoveryService {
@@ -73,7 +73,7 @@ export class PasswordRecoveryService {
     }
 
     await this.usersService.updateUser(existingUser.id, {
-      password: await hash(dto.password),
+      password: await HashService.hash(dto.password),
     });
 
     await this.tokensService.deleteToken(
@@ -87,11 +87,13 @@ export class PasswordRecoveryService {
   private async generatePasswordResetToken(email: string): Promise<IToken> {
     const token = uuidv4();
     const expiresIn = new Date(new Date().getTime() + 3600 * 1000);
-
-    const existingToken = await this.tokensService.findTokenByTypeAndEmail(
-      email,
-      TokenType.PASSWORD_RESET,
-    );
+    let existingToken;
+    try {
+      existingToken = await this.tokensService.findTokenByTypeAndEmail(
+        email,
+        TokenType.PASSWORD_RESET,
+      );
+    } catch (err) {}
 
     if (existingToken) {
       await this.tokensService.deleteToken(

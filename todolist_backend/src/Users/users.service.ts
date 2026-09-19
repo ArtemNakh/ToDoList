@@ -6,6 +6,7 @@ import * as argon2 from 'argon2';
 import { CreateUserDto } from './dto/CreateUser.dto.js';
 import IUser from './user.interface.js';
 import { UpdateUserDto } from './dto/UpdateUser.dto.js';
+import { HashService } from '../libs/common/comparePassword.js';
 @Injectable()
 export class UsersService {
   constructor(
@@ -23,7 +24,6 @@ export class UsersService {
    * @returns user object or null
    */
   public async findByEmail(email: string): Promise<IUser | null> {
-    console.log('email', email);
     const client = await this.usersRepository.findOne({
       where: { email },
     });
@@ -41,7 +41,7 @@ export class UsersService {
       name: data.name,
       surname: data.surname,
       email: data.email,
-      password: await argon2.hash(data.password),
+      password: await HashService.hash(data.password),
     });
     await this.usersRepository.save(user);
     return user;
@@ -64,7 +64,7 @@ export class UsersService {
 
     // Якщо передано новий пароль — хешуємо його
     if (dto.password) {
-      user.password = await argon2.hash(dto.password);
+      user.password = await HashService.hash(dto.password);
       delete dto.password;
     }
     Object.assign(user, dto);

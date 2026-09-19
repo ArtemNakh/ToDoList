@@ -9,6 +9,7 @@ import { TokensModule } from './Tokens/tokens.module.js';
 import { NotesModule } from './Notes/notes.module.js';
 import { AuthModule } from './Auth/auth.module.js';
 import { EmailConfirmationModule } from './Auth/email-confirmation/email-confirmation.module.js';
+import { PasswordRecoveryModule } from './Auth/password-recovery/password-recovery.module.js';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { EmailConfirmationModule } from './Auth/email-confirmation/email-confirm
     NotesModule,
     AuthModule,
     EmailConfirmationModule,
+    PasswordRecoveryModule
   ],
   controllers: [AppController],
   providers: [AppService],
