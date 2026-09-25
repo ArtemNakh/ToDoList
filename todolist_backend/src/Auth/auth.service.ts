@@ -109,7 +109,7 @@ export class AuthService {
     user: IUser,
   ): Promise<{ authToken: string }> {
     return new Promise((resolve, reject) => {
-      req.session.userId = user.id.toString();
+      req.session.userId = user.id;
       req.session.save((err) => {
         if (err) {
           return reject(

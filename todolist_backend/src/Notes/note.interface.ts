@@ -1,4 +1,3 @@
-
 import IUser from '../Users/user.interface.js';
 
 interface INote {
@@ -8,6 +7,9 @@ interface INote {
   user: IUser;
   created_at: Date;
   updated_at: Date;
+
+  isValid(): Boolean;
+  canBeCreated(): Boolean;
 }
 
 export default INote;
