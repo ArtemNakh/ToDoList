@@ -11,9 +11,9 @@ import {
   afterEach,
   Mocked,
 } from 'vitest';
-import Note from './note.entity.js';
-import { SaveNoteDto } from './dto/Services/SaveNote.dto.js';
-import { NotesService } from './notes.services.js';
+import Note from '../note.entity.js';
+import { SaveNoteDto } from '../dto/Services/SaveNote.dto.js';
+import { NotesService } from '../notes.services.js';
 
 describe('NotesService', () => {
   let service: NotesService;

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { NotesController } from './notes.controller.js';
-import { NotesService } from './notes.services.js';
-import INote from './note.interface.js';
-import { SessionAuthGuard } from '../libs/Guards/SessionAuth.guard.js';
+import { NotesController } from '../notes.controller.js';
+import { NotesService } from '../notes.services.js';
+import INote from '../note.interface.js';
+import { SessionAuthGuard } from '../../libs/Guards/SessionAuth.guard.js';
 
 describe('NotesController', () => {
   let controller: NotesController;

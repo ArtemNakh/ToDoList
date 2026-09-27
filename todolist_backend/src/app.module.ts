@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { typeOrmConfig } from '../config/typeorm.config.js';
@@ -26,7 +24,7 @@ import { PasswordRecoveryModule } from './Auth/password-recovery/password-recove
     EmailConfirmationModule,
     PasswordRecoveryModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
