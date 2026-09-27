@@ -1,10 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import {
+  BadRequestException,
+  ForbiddenException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { vi, describe, it, expect, beforeEach, Mocked } from 'vitest';
 import { NotesController } from '../notes.controller.js';
 import { NotesService } from '../notes.services.js';
 import INote from '../note.interface.js';
 import { SessionAuthGuard } from '../../libs/Guards/SessionAuth.guard.js';
+import { RemoveNoteDto } from '../dto/Param/RemoveNote.dto.js';
 
 describe('NotesController', () => {
   let controller: NotesController;
@@ -14,6 +20,7 @@ describe('NotesController', () => {
   const mockNotesService = {
     findAll: vi.fn(),
     saveNote: vi.fn(),
+    deleteNote: vi.fn(),
   };
 
   // Тестові дані
@@ -103,6 +110,68 @@ describe('NotesController', () => {
         BadRequestException,
       );
       expect(service.saveNote).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('removeNote', () => {
+    const mockParams: RemoveNoteDto = { noteId: 1 };
+    const mockUserId = 2;
+
+    it('should successfully remove a note and return undefined', async () => {
+      mockNotesService.deleteNote.mockResolvedValue(undefined);
+
+      const result = await controller.removeNote(mockParams, mockUserId);
+
+      expect(mockNotesService.deleteNote).toHaveBeenCalledTimes(1);
+      expect(mockNotesService.deleteNote).toHaveBeenCalledWith(
+        mockParams.noteId,
+        mockUserId,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it('should throw NotFoundException if note does not exist', async () => {
+      const error = new NotFoundException('Note not found');
+      mockNotesService.deleteNote.mockRejectedValue(error);
+
+      await expect(
+        controller.removeNote(mockParams, mockUserId),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockNotesService.deleteNote).toHaveBeenCalledWith(
+        mockParams.noteId,
+        mockUserId,
+      );
+    });
+
+    it('should throw ForbiddenException if user does not own the note', async () => {
+      const error = new ForbiddenException(
+        'You are not allowed to delete this note',
+      );
+      mockNotesService.deleteNote.mockRejectedValue(error);
+
+      await expect(
+        controller.removeNote(mockParams, mockUserId),
+      ).rejects.toThrow(ForbiddenException);
+
+      expect(mockNotesService.deleteNote).toHaveBeenCalledWith(
+        mockParams.noteId,
+        mockUserId,
+      );
+    });
+
+    it('should throw InternalServerErrorException on unexpected database or service failure', async () => {
+      const error = new InternalServerErrorException('Database failure');
+      mockNotesService.deleteNote.mockRejectedValue(error);
+
+      await expect(
+        controller.removeNote(mockParams, mockUserId),
+      ).rejects.toThrow(InternalServerErrorException);
+
+      expect(mockNotesService.deleteNote).toHaveBeenCalledWith(
+        mockParams.noteId,
+        mockUserId,
+      );
     });
   });
 });

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import INote from './note.interface.js';
 import { NotesService } from './notes.services.js';
 import { GetCurrentUser } from '../libs/Decorators/GetCurrentSession.js';
@@ -13,6 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { NoteResponseDto } from './dto/Response/Note.response.dto.js';
 import { ApiSaveNote } from './dto/ApiSwager/SaveNote.api.js';
+import { RemoveNoteDto } from './dto/Param/RemoveNote.dto.js';
+import { ApiRemoveNote } from './dto/ApiSwager/RemoveNote.api.js';
 
 @Controller('Notes')
 export class NotesController {
@@ -23,7 +33,7 @@ export class NotesController {
     return this.notesService.findAll();
   }
 
-  @Post('v1/save')
+  @Post('v1/note/save')
   @UseGuards(SessionAuthGuard)
   @ApiSaveNote()
   async saveNote(
@@ -38,5 +48,16 @@ export class NotesController {
 
     return newNote;
   }
-  
+
+  @Delete('v1/note/remove/:noteId')
+  @UseGuards(SessionAuthGuard)
+  @ApiRemoveNote()
+  async removeNote(
+    @Param() params: RemoveNoteDto,
+    @GetCurrentUser() userId: number,
+  ): Promise<void> {
+    const { noteId } = params;
+
+    await this.notesService.deleteNote(noteId, userId);
+  }
 }

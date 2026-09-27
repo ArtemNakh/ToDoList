@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import {
   vi,
   describe,
@@ -17,7 +17,7 @@ import { NotesService } from '../notes.services.js';
 
 describe('NotesService', () => {
   let service: NotesService;
-  let repo: Mocked<Repository<Note>>;
+  let notesRepo: Mocked<Repository<Note>>;
 
   // Шаблонний об'єкт для тестових даних
   const mockNote = new Note({
@@ -38,13 +38,15 @@ describe('NotesService', () => {
           useValue: {
             find: vi.fn(),
             save: vi.fn(),
+            findOne: vi.fn(),
+            remove: vi.fn(),
           },
         },
       ],
     }).compile();
 
     service = module.get<NotesService>(NotesService);
-    repo = module.get(getRepositoryToken(Note));
+    notesRepo = module.get(getRepositoryToken(Note));
   });
 
   it('should be defined', () => {
@@ -71,11 +73,11 @@ describe('NotesService', () => {
         user: { id: validDto.user.id } as any,
       });
       vi.spyOn(Note.prototype, 'canBeCreated').mockReturnValue(true);
-      repo.save.mockResolvedValue(savedNote);
+      notesRepo.save.mockResolvedValue(savedNote);
 
       const result = await service.saveNote(validDto);
 
-      expect(repo.save).toHaveBeenCalledWith(
+      expect(notesRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({ title: validDto.title }),
       );
       expect(result).toEqual(savedNote);
@@ -88,13 +90,15 @@ describe('NotesService', () => {
       await expect(service.saveNote(validDto)).rejects.toThrow(
         BadRequestException,
       );
-      expect(repo.save).not.toHaveBeenCalled();
+      expect(notesRepo.save).not.toHaveBeenCalled();
     });
 
     // 3. Негативний: Помилка збереження в базі даних (наприклад, збій БД або унікальний ключ)
     it('should propagate database exception when repo.save fails', async () => {
       vi.spyOn(Note.prototype, 'canBeCreated').mockReturnValue(true);
-      repo.save.mockRejectedValue(new Error('Database connection failure'));
+      notesRepo.save.mockRejectedValue(
+        new Error('Database connection failure'),
+      );
 
       await expect(service.saveNote(validDto)).rejects.toThrow(
         'Database connection failure',
@@ -115,12 +119,14 @@ describe('NotesService', () => {
       });
 
       vi.spyOn(Note.prototype, 'canBeCreated').mockReturnValue(true);
-      repo.save.mockResolvedValue(savedNote);
+      notesRepo.save.mockResolvedValue(savedNote);
 
       const result = await service.saveNote(dtoWithoutContent);
 
-      expect(repo.save).toHaveBeenCalledTimes(1);
+      expect(notesRepo.save).toHaveBeenCalledTimes(1);
       expect(result).toEqual(savedNote);
     });
   });
+
+  
 });
