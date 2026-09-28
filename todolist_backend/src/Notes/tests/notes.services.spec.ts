@@ -12,8 +12,11 @@ import {
   Mocked,
 } from 'vitest';
 import Note from '../note.entity.js';
-import { SaveNoteDto } from '../dto/Services/SaveNote.dto.js';
+import { SaveNoteDto } from '../dto/Services/SaveNote.service.dto.js';
 import { NotesService } from '../notes.services.js';
+import { UpdateNoteDto } from '../dto/Services/UpdateNote.service.dto.js';
+import INote from '../note.interface.js';
+import { title } from 'process';
 
 describe('NotesService', () => {
   let service: NotesService;
@@ -128,5 +131,241 @@ describe('NotesService', () => {
     });
   });
 
-  
+  describe('updateNote', () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it('should successfully update content and title note', async () => {
+      // Arrange (Підготовка)
+      // 1. Вхідні дані, які нібито передав користувач через API
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+        content: 'Eggs',
+        title: 'Cake recept',
+      };
+      // 2. Фейкова нотатка, яка нібито вже є в базі даних
+      const existingNote = {
+        id: 1,
+        title: 'testTitle',
+        content: 'testcontent',
+        user: { id: 1 },
+      };
+
+      // 3. Вказуємо моку, ЩО відповідати, коли сервіс викликає findOne
+      notesRepo.findOne.mockResolvedValue(existingNote as any);
+
+      // 4. Вказуємо моку, ЩО відповідати при виклику save (повертаємо те, що передали)
+      notesRepo.save.mockImplementation(async (note) => note as any);
+
+      //Act (Виконання)
+      const result = await service.updateNote(updateNoteDto);
+
+      //Assert (Перевірка результатів)
+      // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
+      expect(notesRepo.findOne).toHaveBeenCalledWith({
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+      });
+
+      // 2. Чи змінилися поля у повернутому результаті?
+      expect(result.title).toBe('Cake recept');
+      expect(result.content).toBe('Eggs');
+
+      // 3. Чи викликав сервіс метод save() з оновленими даними?
+      expect(notesRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 1,
+          title: 'Cake recept',
+          content: 'Eggs',
+        }),
+      );
+    });
+
+    it('should successfully update only title note', async () => {
+      // Arrange (Підготовка)
+      // 1. Вхідні дані, які нібито передав користувач через API
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+        title: 'Cake recept',
+      };
+      // 2. Фейкова нотатка, яка нібито вже є в базі даних
+      const existingNote = {
+        id: 1,
+        title: 'testTitle',
+        content: 'testContent',
+        user: { id: 1 },
+      };
+
+      // 3. Вказуємо моку, ЩО відповідати, коли сервіс викликає findOne
+      notesRepo.findOne.mockResolvedValue(existingNote as any);
+
+      // 4. Вказуємо моку, ЩО відповідати при виклику save (повертаємо те, що передали)
+      notesRepo.save.mockImplementation(async (note) => note as any);
+
+      //Act (Виконання)
+      const result = await service.updateNote(updateNoteDto);
+
+      //Assert (Перевірка результатів)
+      // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
+      expect(notesRepo.findOne).toHaveBeenCalledWith({
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+      });
+
+      // 2. Чи змінилися поля у повернутому результаті?
+      expect(result.title).toBe('Cake recept');
+      expect(result.content).toBe('testContent');
+
+      // 3. Чи викликав сервіс метод save() з оновленими даними?
+      expect(notesRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 1,
+          title: 'Cake recept',
+          content: 'testContent',
+        }),
+      );
+    });
+
+    it('should successfully update only content note', async () => {
+      // Arrange (Підготовка)
+      // 1. Вхідні дані, які нібито передав користувач через API
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+        content: 'newContent',
+      };
+      // 2. Фейкова нотатка, яка нібито вже є в базі даних
+      const existingNote = {
+        id: 1,
+        title: 'oldTitle',
+        content: 'oldTitle',
+        user: { id: 1 },
+      };
+
+      // 3. Вказуємо моку, ЩО відповідати, коли сервіс викликає findOne
+      notesRepo.findOne.mockResolvedValue(existingNote as any);
+
+      // 4. Вказуємо моку, ЩО відповідати при виклику save (повертаємо те, що передали)
+      notesRepo.save.mockImplementation(async (note) => note as any);
+
+      //Act (Виконання)
+      const result = await service.updateNote(updateNoteDto);
+
+      //Assert (Перевірка результатів)
+      // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
+      expect(notesRepo.findOne).toHaveBeenCalledWith({
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+      });
+
+      // 2. Чи змінилися поля у повернутому результаті?
+      expect(result.title).toBe('oldTitle');
+      expect(result.content).toBe('newContent');
+
+      // 3. Чи викликав сервіс метод save() з оновленими даними?
+      expect(notesRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 1,
+          title: 'oldTitle',
+          content: 'newContent',
+        }),
+      );
+    });
+
+    it('Don`t should change values when dto havn`t new content and title ', async () => {
+      //Arrange
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+      };
+      const existingNote = {
+        id: 1,
+        title: 'oldTitle',
+        content: 'oldContent',
+        user: { id: 1 },
+      };
+
+      notesRepo.findOne.mockResolvedValue(existingNote as any);
+      notesRepo.save.mockImplementation(async (note) => note as any);
+
+      //Act
+      const result = await service.updateNote(updateNoteDto);
+
+      //Assert
+      expect(result.title).toBe('oldTitle');
+      expect(result.content).toBe('oldContent');
+      expect(notesRepo.save).toHaveBeenCalledWith(existingNote);
+    });
+
+    it('NotFoundException if user doesn`t have note with specified id', async () => {
+      //Arrange
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+        title: 'Some Title',
+      };
+
+      notesRepo.findOne.mockResolvedValue(null);
+
+      //Act
+
+      //Assert
+      await expect(service.updateNote(updateNoteDto)).rejects.toThrow(
+        NotFoundException,
+      );
+
+      expect(notesRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('Don`t save empty values("")', async () => {
+      //Arrange
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+      };
+      const existingNote = {
+        id: 1,
+        title: 'oldTitle',
+        content: 'oldContent',
+        user: { id: 1 },
+      };
+
+      notesRepo.findOne.mockResolvedValue(existingNote as any);
+      notesRepo.save.mockImplementation(async (note) => note as any);
+
+      //Act
+      const result = await service.updateNote(updateNoteDto);
+
+      //Assert
+      expect(result.title).toBe('oldTitle');
+      expect(result.content).toBe('oldContent');
+      expect(notesRepo.save).toHaveBeenCalledWith(existingNote);
+    });
+
+    it('Don`t save if error in database', async () => {
+      //Arrange
+      const updateNoteDto: UpdateNoteDto = {
+        noteId: 1,
+        userId: 1,
+        title: 'Some Title',
+        content: 'Some Content',
+      };
+      const existingNote = {
+        id: 1,
+        title: 'oldTitle',
+        content: 'oldContent',
+        user: { id: 1 },
+      } as any;
+
+      notesRepo.findOne.mockResolvedValue(existingNote);
+      notesRepo.save.mockRejectedValue(new Error('Database connection error'));
+
+      //Act
+
+      //Assert
+      await expect(service.updateNote(updateNoteDto)).rejects.toThrow(
+        'Database connection error',
+      );
+    });
+  });
 });

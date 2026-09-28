@@ -10,7 +10,10 @@ import { NotesController } from '../notes.controller.js';
 import { NotesService } from '../notes.services.js';
 import INote from '../note.interface.js';
 import { SessionAuthGuard } from '../../libs/Guards/SessionAuth.guard.js';
-import { RemoveNoteDto } from '../dto/Param/RemoveNote.dto.js';
+import { RemoveNoteDto } from '../dto/Param/RemoveNote.param.dto.js';
+import { UpdateNoteBodyDto } from '../dto/Body/UpdateNote.body.dto.js';
+import { UpdateNoteParamDto } from '../dto/Param/UpdateNote.param.dto.js';
+import { title } from 'process';
 
 describe('NotesController', () => {
   let controller: NotesController;
@@ -21,6 +24,7 @@ describe('NotesController', () => {
     findAll: vi.fn(),
     saveNote: vi.fn(),
     deleteNote: vi.fn(),
+    updateNote: vi.fn(),
   };
 
   // Тестові дані
@@ -172,6 +176,131 @@ describe('NotesController', () => {
         mockParams.noteId,
         mockUserId,
       );
+    });
+  });
+
+  describe('updateNote', () => {
+    const mockUserId = 1;
+    const mockParams: UpdateNoteParamDto = { noteId: 1 };
+
+    it('Must successfully  send title and content value into service and get as updated note as result ', async () => {
+      const mockBody: UpdateNoteBodyDto = {
+        title: 'newTitle',
+        content: 'newContent',
+      };
+
+      const mockUpdatedNote = {
+        id: 1,
+        title: 'newTitle',
+        content: 'newContent',
+        user: { id: 1 },
+      };
+
+      mockNotesService.updateNote.mockResolvedValue(mockUpdatedNote);
+
+      //Act
+
+      const result = await controller.updateNote(
+        mockParams,
+        mockBody,
+        mockUserId,
+      );
+
+      //Assert
+      expect(mockNotesService.updateNote).toHaveBeenCalledWith({
+        title: mockBody.title,
+        content: mockBody.content,
+        userId: mockUserId,
+        noteId: mockParams.noteId,
+      });
+      expect(mockNotesService.updateNote).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedNote);
+    });
+
+    it('Must successfully  send title value into service and get as updated note as result ', async () => {
+      const mockBody: UpdateNoteBodyDto = {
+        title: 'newTitle',
+      };
+
+      const mockUpdatedNote = {
+        id: 1,
+        title: 'newTitle',
+        content: 'newContent',
+        user: { id: 1 },
+      };
+
+      mockNotesService.updateNote.mockResolvedValue(mockUpdatedNote);
+
+      //Act
+
+      const result = await controller.updateNote(
+        mockParams,
+        mockBody,
+        mockUserId,
+      );
+
+      //Assert
+      expect(mockNotesService.updateNote).toHaveBeenCalledWith({
+        title: mockBody.title,
+        userId: mockUserId,
+        noteId: mockParams.noteId,
+      });
+      expect(mockNotesService.updateNote).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedNote);
+    });
+
+    it('Must successfully  send content value into service and get as updated note as result ', async () => {
+      const mockBody: UpdateNoteBodyDto = {
+        content: 'newContent',
+      };
+
+      const mockUpdatedNote = {
+        id: 1,
+        title: 'newTitle',
+        content: 'newContent',
+        user: { id: 1 },
+      };
+
+      mockNotesService.updateNote.mockResolvedValue(mockUpdatedNote);
+
+      //Act
+
+      const result = await controller.updateNote(
+        mockParams,
+        mockBody,
+        mockUserId,
+      );
+
+      //Assert
+      expect(mockNotesService.updateNote).toHaveBeenCalledWith({
+        content: mockBody.content,
+        userId: mockUserId,
+        noteId: mockParams.noteId,
+      });
+      expect(mockNotesService.updateNote).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedNote);
+    });
+
+    it('Must reject error NotFound Exception, if service return rrror', async () => {
+      // Arrange
+      const mockBody: UpdateNoteBodyDto = {
+        title: 'New Title',
+      };
+      const error = new NotFoundException(
+        'Note with id: 10 for user with id: 1 not found',
+      );
+      mockNotesService.updateNote.mockRejectedValue(error);
+
+      await expect(
+        controller.updateNote(mockParams, mockBody, mockUserId),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(mockNotesService.updateNote).toHaveBeenCalledWith({
+        title: mockBody.title,
+        content: undefined,
+        userId: mockUserId,
+        noteId: mockParams.noteId,
+      });
     });
   });
 });

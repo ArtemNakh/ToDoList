@@ -7,9 +7,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import INote from './note.interface.js';
-import { SaveNoteDto } from './dto/Services/SaveNote.dto.js';
+import { SaveNoteDto } from './dto/Services/SaveNote.service.dto.js';
 import IUser from '../Users/user.interface.js';
-import { NotFoundError } from 'rxjs';
+import { UpdateNoteDto } from './dto/Services/UpdateNote.service.dto.js';
 
 @Injectable()
 export class NotesService {
@@ -58,7 +58,7 @@ export class NotesService {
         user: { id: userId },
       },
       relations: {
-        user: true, // Явно вказуємо завантажити сутність user (LEFT JOIN)
+        user: true,
       },
     });
     if (!note || note.user.id != userId) {
@@ -68,5 +68,33 @@ export class NotesService {
     }
 
     await this.notesRepo.remove(note);
+  }
+
+  /**
+   * Update note by noteId and userId
+   *
+   * @param newNote - Dto object that have values for update
+   * @returns Updated note with new values
+   *
+   * @throws {NotFoundException} - If user(by userId) haven`t  current note(by noteId)  
+   */
+  public async updateNote(newNote: UpdateNoteDto): Promise<INote> {
+    const note: INote | null = await this.notesRepo.findOne({
+      where: { id: newNote.noteId, user: { id: newNote.userId } },
+      relations: { user: true },
+    });
+    if (!note || note == null || !note.user) {
+      throw new NotFoundException(
+        `Note with id: ${newNote.noteId}  for user with id:${newNote.userId} not found`,
+      );
+    }
+
+    Object.assign(note, {
+      ...(newNote.content && { content: newNote.content }),
+      ...(newNote.title && { title: newNote.title }),
+    });
+
+    await this.notesRepo.save(note);
+    return note;
   }
 }

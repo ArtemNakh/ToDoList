@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -12,19 +13,14 @@ import { NotesService } from './notes.services.js';
 import { GetCurrentUser } from '../libs/Decorators/GetCurrentSession.js';
 import { SessionAuthGuard } from '../libs/Guards/SessionAuth.guard.js';
 import { SaveNoteBodyDto } from './dto/Body/SaveNote.body.dto.js';
-import {
-  ApiBadRequestResponse,
-  ApiCookieAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { NoteResponseDto } from './dto/Response/Note.response.dto.js';
 import { ApiSaveNote } from './dto/ApiSwager/SaveNote.api.js';
-import { RemoveNoteDto } from './dto/Param/RemoveNote.dto.js';
+import { RemoveNoteDto } from './dto/Param/RemoveNote.param.dto.js';
 import { ApiRemoveNote } from './dto/ApiSwager/RemoveNote.api.js';
+import { UpdateNoteParamDto } from './dto/Param/UpdateNote.param.dto.js';
+import { UpdateNoteBodyDto } from './dto/Body/UpdateNote.body.dto.js';
+import { ApiUpdateNote } from './dto/ApiSwager/UpdateNote.api.dto.js';
 
-@Controller('Notes')
+@Controller('notes')
 export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
@@ -33,7 +29,7 @@ export class NotesController {
     return this.notesService.findAll();
   }
 
-  @Post('v1/note/save')
+  @Post('v1/save')
   @UseGuards(SessionAuthGuard)
   @ApiSaveNote()
   async saveNote(
@@ -49,7 +45,7 @@ export class NotesController {
     return newNote;
   }
 
-  @Delete('v1/note/remove/:noteId')
+  @Delete('v1/remove/:noteId')
   @UseGuards(SessionAuthGuard)
   @ApiRemoveNote()
   async removeNote(
@@ -59,5 +55,26 @@ export class NotesController {
     const { noteId } = params;
 
     await this.notesService.deleteNote(noteId, userId);
+  }
+
+  @Patch('v1/update/:noteId')
+  @UseGuards(SessionAuthGuard)
+  @ApiUpdateNote()
+  async updateNote(
+    @Param() params: UpdateNoteParamDto,
+    @Body() body: UpdateNoteBodyDto,
+    @GetCurrentUser() userId: number,
+  ): Promise<INote> {
+    const { noteId } = params;
+    const { content, title } = body;
+
+    const newNote = await this.notesService.updateNote({
+      title: title,
+      content: content,
+      userId: userId,
+      noteId: noteId,
+    });
+
+    return newNote;
   }
 }
