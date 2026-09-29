@@ -165,7 +165,7 @@ describe('NotesService', () => {
       //Assert (Перевірка результатів)
       // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
       expect(notesRepo.findOne).toHaveBeenCalledWith({
-        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },relations: { user: true },
       });
 
       // 2. Чи змінилися поля у повернутому результаті?
@@ -210,7 +210,7 @@ describe('NotesService', () => {
       //Assert (Перевірка результатів)
       // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
       expect(notesRepo.findOne).toHaveBeenCalledWith({
-        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },relations: { user: true },
       });
 
       // 2. Чи змінилися поля у повернутому результаті?
@@ -255,7 +255,7 @@ describe('NotesService', () => {
       //Assert (Перевірка результатів)
       // 1. Чи зробив сервіс правильний запит до "БД" (моку)?
       expect(notesRepo.findOne).toHaveBeenCalledWith({
-        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },
+        where: { id: updateNoteDto.noteId, user: { id: updateNoteDto.userId } },relations: { user: true },
       });
 
       // 2. Чи змінилися поля у повернутому результаті?
@@ -366,6 +366,39 @@ describe('NotesService', () => {
       await expect(service.updateNote(updateNoteDto)).rejects.toThrow(
         'Database connection error',
       );
+    });
+  });
+
+  describe('GetNotesByUserId', () => {
+    it('should return an array of notes for a valid userId', async () => {
+      const userId = 2;
+      const expectedNotes = [mockNote];
+
+      // Мокаємо успішне повернення масиву з репозиторію
+      notesRepo.find.mockResolvedValue(expectedNotes);
+
+      const result = await service.GetNotesByUserId(userId);
+
+      // Перевіряємо, що репозиторій викликано з правильними параметрами
+      expect(notesRepo.find).toHaveBeenCalledWith({
+        where: { user: { id: userId } },
+      });
+      expect(notesRepo.find).toHaveBeenCalledTimes(1);
+
+      // Перевіряємо результат виконання методу
+      expect(result).toEqual(expectedNotes);
+    });
+
+    it('should throw BadRequestException if userId is missing or falsy (e.g., 0, null, undefined)', async () => {
+      const invalidUserId = 0; // 0 є falsy-значенням для перевірки `if (!userId)`
+
+      // Перевіряємо, що викликається BadRequestException з відповідним повідомленням
+      await expect(service.GetNotesByUserId(invalidUserId)).rejects.toThrow(
+        new BadRequestException('UserId must be'),
+      );
+
+      // Репозиторій не повинен викликатися, якщо валідація не пройшла
+      expect(notesRepo.find).not.toHaveBeenCalled();
     });
   });
 });

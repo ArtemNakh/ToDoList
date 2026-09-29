@@ -97,4 +97,22 @@ export class NotesService {
     await this.notesRepo.save(note);
     return note;
   }
+
+  /**
+   * Return all notes that have user
+   * 
+   * @param userId - Specified id that identified user
+   * @returns Notes list that have current user 
+   */
+  public async GetNotesByUserId(userId: number): Promise<INote[]> {
+    if (!userId) {
+      throw new BadRequestException('UserId must be');
+    }
+
+    const notes = await this.notesRepo.find({
+      where: { user: { id: userId } },
+    });
+
+    return notes;
+  }
 }

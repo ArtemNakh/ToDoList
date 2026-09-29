@@ -25,6 +25,7 @@ describe('NotesController', () => {
     saveNote: vi.fn(),
     deleteNote: vi.fn(),
     updateNote: vi.fn(),
+    GetNotesByUserId: vi.fn(),
   };
 
   // Тестові дані
@@ -301,6 +302,52 @@ describe('NotesController', () => {
         userId: mockUserId,
         noteId: mockParams.noteId,
       });
+    });
+  });
+
+  describe('getNotesByUser', () => {
+    it('should successfully return array of notes for given userId', async () => {
+      // Arrange
+      const userId = 2;
+      const expectedNotes: INote[] = [mockNote];
+
+      mockNotesService.GetNotesByUserId.mockResolvedValue(expectedNotes);
+
+      // Act
+      const result = await controller.getNotesByUser(userId);
+
+      // Assert
+      expect(service.GetNotesByUserId).toHaveBeenCalledWith(userId);
+      expect(service.GetNotesByUserId).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedNotes);
+    });
+
+    it('should return empty array if user has no notes', async () => {
+      // Arrange
+      const userId = 2;
+
+      mockNotesService.GetNotesByUserId.mockResolvedValue([]);
+
+      // Act
+      const result = await controller.getNotesByUser(userId);
+
+      // Assert
+      expect(service.GetNotesByUserId).toHaveBeenCalledWith(userId);
+      expect(result).toEqual([]);
+    });
+
+    it('should throw BadRequestException if service throws it (e.g. invalid userId)', async () => {
+      // Arrange
+      const userId = 0;
+      mockNotesService.GetNotesByUserId.mockRejectedValue(
+        new BadRequestException('UserId must be'),
+      );
+
+      // Act & Assert
+      await expect(controller.getNotesByUser(userId)).rejects.toThrow(
+        BadRequestException,
+      );
+      expect(service.GetNotesByUserId).toHaveBeenCalledWith(userId);
     });
   });
 });

@@ -19,6 +19,7 @@ import { ApiRemoveNote } from './dto/ApiSwager/RemoveNote.api.js';
 import { UpdateNoteParamDto } from './dto/Param/UpdateNote.param.dto.js';
 import { UpdateNoteBodyDto } from './dto/Body/UpdateNote.body.dto.js';
 import { ApiUpdateNote } from './dto/ApiSwager/UpdateNote.api.dto.js';
+import { ApiGetNotes } from './dto/ApiSwager/GetNotes.api.js';
 
 @Controller('notes')
 export class NotesController {
@@ -76,5 +77,13 @@ export class NotesController {
     });
 
     return newNote;
+  }
+
+  @Get('v1/get-all-by-user')
+  @UseGuards(SessionAuthGuard)
+  @ApiGetNotes()
+  async getNotesByUser(@GetCurrentUser() userId: number) {
+    const notes = await this.notesService.GetNotesByUserId(userId);
+    return notes;
   }
 }
