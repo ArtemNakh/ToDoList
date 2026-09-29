@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { verify } from 'argon2';
 import { UsersService } from '../Users/users.service.js';
 import { RegistrationUserDto } from './dto/RegistrationUser.dto.js';
 import { LoginUserDto } from './dto/loginUser.dto.js';

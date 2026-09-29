@@ -8,8 +8,8 @@ interface INote {
   created_at: Date;
   updated_at: Date;
 
-  isValid(): Boolean;
-  canBeCreated(): Boolean;
+  isValid(): boolean;
+  canBeCreated(): boolean;
 }
 
 export default INote;

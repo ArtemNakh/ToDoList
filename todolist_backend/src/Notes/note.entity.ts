@@ -43,7 +43,7 @@ class Note implements INote {
    * 
    * @returns if note valid return true if not valid return false
    */
-  isValid(): Boolean {
+  isValid(): boolean {
     return (
       typeof this.id === 'number' &&
       typeof this.title === 'string' &&

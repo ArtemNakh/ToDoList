@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { vi, describe, it, expect, beforeEach, Mocked } from 'vitest';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { NotesController } from '../notes.controller.js';
 import { NotesService } from '../notes.services.js';
 import INote from '../note.interface.js';
@@ -13,7 +13,6 @@ import { SessionAuthGuard } from '../../libs/Guards/SessionAuth.guard.js';
 import { RemoveNoteDto } from '../dto/Param/RemoveNote.param.dto.js';
 import { UpdateNoteBodyDto } from '../dto/Body/UpdateNote.body.dto.js';
 import { UpdateNoteParamDto } from '../dto/Param/UpdateNote.param.dto.js';
-import { title } from 'process';
 
 describe('NotesController', () => {
   let controller: NotesController;

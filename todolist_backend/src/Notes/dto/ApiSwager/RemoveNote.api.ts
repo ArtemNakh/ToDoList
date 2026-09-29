@@ -3,7 +3,6 @@ import {
   ApiCookieAuth,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiParam,
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';

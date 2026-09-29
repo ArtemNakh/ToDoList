@@ -15,8 +15,7 @@ import Note from '../note.entity.js';
 import { SaveNoteDto } from '../dto/Services/SaveNote.service.dto.js';
 import { NotesService } from '../notes.services.js';
 import { UpdateNoteDto } from '../dto/Services/UpdateNote.service.dto.js';
-import INote from '../note.interface.js';
-import { title } from 'process';
+
 
 describe('NotesService', () => {
   let service: NotesService;

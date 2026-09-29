@@ -93,7 +93,7 @@ export class PasswordRecoveryService {
         email,
         TokenType.PASSWORD_RESET,
       );
-    } catch (err) {}
+    } catch {}
 
     if (existingToken) {
       await this.tokensService.deleteToken(

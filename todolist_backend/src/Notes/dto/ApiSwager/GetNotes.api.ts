@@ -1,7 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiCookieAuth,
-  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiUnauthorizedResponse,

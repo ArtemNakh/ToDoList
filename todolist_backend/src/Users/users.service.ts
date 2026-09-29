@@ -2,11 +2,11 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as argon2 from 'argon2';
 import { CreateUserDto } from './dto/CreateUser.dto.js';
 import IUser from './user.interface.js';
 import { UpdateUserDto } from './dto/UpdateUser.dto.js';
 import { HashService } from '../libs/common/comparePassword.js';
+
 @Injectable()
 export class UsersService {
   constructor(
