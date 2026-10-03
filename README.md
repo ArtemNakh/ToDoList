@@ -48,7 +48,7 @@ The purpose of this project is to develop a modern, production-ready full-stack 
 
   ```bash
   git clone https://github.com/ArtemNakh/ToDoList.git
-  cd todolist_backend
+  cd ToDoList/todolist_backend
   npm install
   ```
 
@@ -60,7 +60,7 @@ The purpose of this project is to develop a modern, production-ready full-stack 
   Running with Docker
 
   ```bash
-  docker compose up --built -d
+  docker compose up -d
   ```
   
   Make the migration for database
